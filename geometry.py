@@ -93,3 +93,20 @@ class Cell:
             point_2 = Point(self.__x2, self.__y2)
             left_line = Line(point_1, point_2)
             self.__win.draw_line(left_line)
+        
+        return self
+
+    def draw_move(self, to_cell, undo=False):
+        self.path_colour = "red"
+        if undo:
+            self.path_colour = "gray"
+        
+        path_point_1 = Point(self.__x1 + ((self.__x2 - self.__x1) / 2), (self.__y1 + (self.__y2 - self.__y1) / 2))
+        path_point_2 = Point(to_cell.__x1 + ((to_cell.__x2 - to_cell.__x1) / 2), (to_cell.__y1 + (to_cell.__y2 - to_cell.__y1) / 2))
+
+        path = Line(path_point_1, path_point_2)
+
+        self.__win.draw_line(path, self.path_colour)
+
+
+
