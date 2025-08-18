@@ -128,20 +128,14 @@ class Maze:
     def __create_cells(self):
 
         if len(self.__cells) == 0:
-            for row in range(self.__num_rows):
-                row_list = []
-                for col in range(self.__num_cols):
-                    new_cell = Cell(self.__win)
-                    row_list.append([new_cell])
+            for col in range(self.__num_cols):
+                col_list = []
+                for row in range(self.__num_rows):
+                    cell = Cell(self.__win)
+                    col_list.append(cell)
+                    self.__draw_cell(row, col)
             
-                self.__cells.append(row_list)
-                print(row_list)
-        
-        for row in self.__cells:
-            i = self.__cells.index(row)
-            for column in row:
-                j = row.index(column)
-                self.__draw_cell(i, j)
+                self.__cells.append(col_list)
     
     def __draw_cell(self, i, j):
         self.__x = ((self.__cell_size_x)* i + self.__x1)
