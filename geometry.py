@@ -55,7 +55,7 @@ class Line:
 
 class Cell:
 
-    def __init__(self, Window):
+    def __init__(self, win=None):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
@@ -64,13 +64,16 @@ class Cell:
         self.__x2 = -1
         self.__y1 = -1
         self.__y2 = -1
-        self.__win = Window
+        self.__win = win
     
     def draw(self, x1, y1, x2, y2):
         self.__x1 = x1
         self.__x2 = x2
         self.__y1 = y1
         self.__y2 = y2
+
+        if self.__win == None:
+            return
 
         if self.has_left_wall:
             point_1 = Point(self.__x1, self.__y1)
@@ -108,12 +111,13 @@ class Cell:
 
         path = Line(path_point_1, path_point_2)
 
-        self.__win.draw_line(path, self.path_colour)
+        if self.__win != None:
+            self.__win.draw_line(path, self.path_colour)
 
 
 class Maze:
 
-    def __init__(self, x1, y1, num_rows, num_cols, cell_size_x, cell_size_y, win):
+    def __init__(self, x1, y1, num_rows, num_cols, cell_size_x, cell_size_y, win=None):
         self.__x1 = x1
         self.__y1 = y1
         self.__num_rows = num_rows
@@ -133,23 +137,35 @@ class Maze:
                 for row in range(self.__num_rows):
                     cell = Cell(self.__win)
                     col_list.append(cell)
-                    self.__draw_cell(row, col)
-            
+
                 self.__cells.append(col_list)
+    
+        if self.__win != None:
+            for col in range(self.__num_cols):
+                for row in range(self.__num_rows):
+                    self.__draw_cell(col, row)
     
     def __draw_cell(self, i, j):
         self.__x = ((self.__cell_size_x)* i + self.__x1)
         self.__y = ((self.__cell_size_y) * j + self.__y1)
+        cell = self.__cells[i][j]
 
-        Cell(self.__win).draw(self.__x, 
+        if self.__win == None:
+            return
+        
+        cell.draw(self.__x, 
                        self.__y, 
                        (self.__x + self.__cell_size_x), 
                        (self.__y + self.__cell_size_y)
-                    )
+                )
+
 
         self.__animate()
 
     def __animate(self):
+        if self.__win == None:
+            return
+        
         Window.redraw(self.__win)
         time.sleep(0.001)
         
