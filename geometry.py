@@ -7,7 +7,7 @@ class Window:
     def __init__(self, width, height):
         self.root = Tk()
         self.root.title('Maze Solver')
-        self.canvas = Canvas(self.root, width=width, height=height)
+        self.canvas = Canvas(self.root, width=width, height=height, bg="white")
         self.canvas.pack(fill=BOTH, expand=1)
         self.window_running = False
         self.root.protocol('WM_DELETE_WINDOW', self.close)
@@ -75,29 +75,37 @@ class Cell:
         if self.__win == None:
             return
 
-        if self.has_left_wall:
-            point_1 = Point(self.__x1, self.__y1)
-            point_2 = Point(self.__x1, self.__y2)
-            left_line = Line(point_1, point_2)
+        point_1 = Point(self.__x1, self.__y1)
+        point_2 = Point(self.__x1, self.__y2)
+        left_line = Line(point_1, point_2)
+        if not self.has_left_wall:
+            self.__win.draw_line(left_line, "white")
+        else:
             self.__win.draw_line(left_line)
 
-        if self.has_right_wall:
-            point_1 = Point(self.__x2, self.__y1)
-            point_2 = Point(self.__x2, self.__y2)
-            left_line = Line(point_1, point_2)
-            self.__win.draw_line(left_line)
+        point_1 = Point(self.__x2, self.__y1)
+        point_2 = Point(self.__x2, self.__y2)
+        right_line = Line(point_1, point_2)
+        if not self.has_right_wall:
+            self.__win.draw_line(right_line, "white")
+        else:
+            self.__win.draw_line(right_line)
 
-        if self.has_top_wall:
-            point_1 = Point(self.__x1, self.__y1)
-            point_2 = Point(self.__x2, self.__y1)
-            left_line = Line(point_1, point_2)
-            self.__win.draw_line(left_line)
+        point_1 = Point(self.__x1, self.__y1)
+        point_2 = Point(self.__x2, self.__y1)
+        top_line = Line(point_1, point_2)
+        if not self.has_top_wall:
+            self.__win.draw_line(top_line, "white")
+        else:
+            self.__win.draw_line(top_line)
 
-        if self.has_bottom_wall:
-            point_1 = Point(self.__x1, self.__y2)
-            point_2 = Point(self.__x2, self.__y2)
-            left_line = Line(point_1, point_2)
-            self.__win.draw_line(left_line)
+        point_1 = Point(self.__x1, self.__y2)
+        point_2 = Point(self.__x2, self.__y2)
+        bottom_line = Line(point_1, point_2)
+        if not self.has_bottom_wall:
+            self.__win.draw_line(bottom_line, "white")
+        else:
+            self.__win.draw_line(bottom_line)
         
         return self
 
@@ -168,4 +176,19 @@ class Maze:
         
         Window.redraw(self.__win)
         time.sleep(0.001)
+
+    def __break_entrance_and_exit(self):
+        starter_cell = self.__cells[0][0]
+        starter_cell.has_top_wall = False
+
+        end_cell = self.__cells[-1][-1]
+        end_cell.has_bottom_wall = False
+
+        self.__draw_cell(0, 0)
+        self.__draw_cell((self.__num_cols - 1), (self.__num_rows - 1))
+   
+
+
+
+
         
