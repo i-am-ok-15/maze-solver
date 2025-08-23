@@ -238,6 +238,12 @@ class Maze:
                 self.__cells[next_i][next_j].has_right_wall = False
    
             self.__break_wall_r(next_i, next_j)
+    
+    def __reset_cells_visited(self):
+
+        for col in self.__cells:
+            for cell in col:
+                cell.visited = False
 
 
 
