@@ -1,4 +1,4 @@
-import time
+import time, random
 from tkinter import Tk, BOTH, Canvas
 
 
@@ -65,6 +65,7 @@ class Cell:
         self.__y1 = -1
         self.__y2 = -1
         self.__win = win
+        self.visited = False
     
     def draw(self, x1, y1, x2, y2):
         self.__x1 = x1
@@ -123,9 +124,10 @@ class Cell:
             self.__win.draw_line(path, self.path_colour)
 
 
+
 class Maze:
 
-    def __init__(self, x1, y1, num_rows, num_cols, cell_size_x, cell_size_y, win=None):
+    def __init__(self, x1, y1, num_rows, num_cols, cell_size_x, cell_size_y, win=None, rand_seed = None):
         self.__x1 = x1
         self.__y1 = y1
         self.__num_rows = num_rows
@@ -134,6 +136,10 @@ class Maze:
         self.__cell_size_y = cell_size_y
         self.__win = win
         self.__cells = []
+        self.rand_seed = rand_seed
+
+        if self.rand_seed != None:
+            self.rand_seed = random.seed(rand_seed)
 
         self.__create_cells()
 
@@ -167,7 +173,6 @@ class Maze:
                        (self.__y + self.__cell_size_y)
                 )
 
-
         self.__animate()
 
     def __animate(self):
@@ -186,8 +191,53 @@ class Maze:
 
         self.__draw_cell(0, 0)
         self.__draw_cell((self.__num_cols - 1), (self.__num_rows - 1))
-   
+    
+    def __break_wall_r(self, i, j):
 
+        starting_cell = self.__cells[i][j]
+        starting_cell.visited = True
+
+        while True:
+
+            possible_next_cells = []
+
+            if j > 0 and not self.__cells[i][j - 1].visited: #check above
+                possible_next_cells.append((i, j - 1))
+            
+            if i < self.__num_cols - 1 and not self.__cells[i + 1][j].visited: #check right
+                possible_next_cells.append((i + 1, j))
+            
+            if j < self.__num_rows - 1 and not self.__cells[i][j + 1].visited: #check below
+                possible_next_cells.append((i, j + 1))
+
+            if i > 0 and not self.__cells[i - 1][j].visited: #check left
+                possible_next_cells.append((i - 1, j))
+            
+            if len(possible_next_cells) == 0:
+                self.__draw_cell(i, j)
+                return
+
+            next_cell = random.choice(possible_next_cells)
+            next_i, next_j = next_cell
+
+            if next_i == i and next_j == j - 1:
+                #next cell is above, break current cell top and next cell bottom
+                self.__cells[i][j].has_top_wall = False
+                self.__cells[next_i][next_j].has_bottom_wall = False
+            elif next_i == i + 1 and next_j == j:
+                #next cell is right
+                self.__cells[i][j].has_right_wall = False
+                self.__cells[next_i][next_j].has_left_wall = False
+            elif next_i == i and next_j == j + 1:
+                #next cell is below
+                self.__cells[i][j].has_bottom_wall = False
+                self.__cells[next_i][next_j].has_top_wall = False
+            elif next_i == i - 1 and next_j == j:
+                #next cell is left         
+                self.__cells[i][j].has_left_wall = False
+                self.__cells[next_i][next_j].has_right_wall = False
+   
+            self.__break_wall_r(next_i, next_j)
 
 
 
