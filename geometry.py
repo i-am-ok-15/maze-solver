@@ -180,7 +180,7 @@ class Maze:
             return
         
         Window.redraw(self.__win)
-        time.sleep(0.00001)
+        time.sleep(0.01)
 
     def __break_entrance_and_exit(self):
         starter_cell = self.__cells[0][0]
